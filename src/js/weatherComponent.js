@@ -48,12 +48,16 @@ export class WeatherComponent extends Component {
         e.preventDefault();
         const resultCallback = async (x) => {
             let result = await x.json();
+            console.log(`Result is ${JSON.stringify(result)}`);
             this.setState({result});
         }
         const errorCallback = async (x) => {
             let error = await x.json();
+            alert(`Weather service can't find weather for your location (:`);
+            console.log(`Weather service can't find weather for your location (:${JSON.stringify(error)}`);
             this.setState({error});
         }
+        console.log("Try to send");
         const sel = this.state.selectedOptions;
         const city = this.state.city;
         if (sel.length > 0) {
@@ -102,7 +106,7 @@ export class WeatherComponent extends Component {
                     placeholder="Enter your city"
                     value={this.state.city}
                     onChange={this.onChangeCity}/>
-                <input className="weather-button" type="submit" value="Search" disabled={city.length == 0}/>
+                <input className="weather-button" type="submit" value="Search" disabled={city.length === 0}/>
             </form>
             <div className="weather-under">
                 <ul className="weather-hints">
