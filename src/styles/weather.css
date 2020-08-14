@@ -1,0 +1,56 @@
+.weather-root {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.weather-root form{
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+.weather-input {
+    flex: 5 1;
+    display: flex;
+    margin: 1%;
+    flex-direction: column;
+}
+
+.weather-hints {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    cursor: default;
+}
+
+.weather-under {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: flex-start;
+}
+
+.weather-hints-item:hover {
+    background-color: aqua;
+
+}
+
+.weather-input input {
+    /*width: 100%;*/
+}
+
+.weather-input .divider {
+    display: none;
+}
+
+.weather-input .menu {
+    position: relative;
+    display: inline-block;
+}
+
+.weather-button {
+    flex: 1 1;
+    margin: 1%;
+}
