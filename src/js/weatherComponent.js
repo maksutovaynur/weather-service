@@ -3,7 +3,7 @@ import '../styles/weather.css';
 import {callById, callByName} from "./weatherApi";
 
 
-function WeatherResult ({result}) {
+function WeatherResult ({result, city}) {
     if (!result) {
         return (<div className="weather-result"/>)
     }
@@ -21,7 +21,7 @@ function WeatherResult ({result}) {
     if (humidity > 80) recommendation += "There is a chance of rain, please use an umbrella!"
     return (<div className="weather-result">
         <table>
-            <tr><td><b>Weather in general:</b></td><td>{weather}</td></tr>
+            <tr><td><b>Weather in {city}:</b></td><td>{weather}</td></tr>
             <tr><td>Temperature:</td><td>{(temp_min - 273.15).toFixed(1)} oC</td></tr>
             <tr><td>Wind speed:</td><td>{speed} м/с</td></tr>
             <tr><td>Humidity:</td><td>{humidity}%</td></tr>
@@ -48,6 +48,11 @@ export class WeatherComponent extends Component {
         e.preventDefault();
         const resultCallback = async (x) => {
             let result = await x.json();
+            const cod = result.cod;
+            if (cod && cod >= 400) {
+                alert("Weather service does not know about your location :( ")
+                return;
+            }
             console.log(`Result is ${JSON.stringify(result)}`);
             this.setState({result});
         }
@@ -61,10 +66,12 @@ export class WeatherComponent extends Component {
         const sel = this.state.selectedOptions;
         const city = this.state.city;
         if (sel.length > 0) {
-            if (sel[0].name === city)
+            if (sel[0].name === city) {
                 callById(sel[0].id, resultCallback, errorCallback);
-            else callByName(city, resultCallback, errorCallback);
+                return;
+            }
         }
+        callByName(city, resultCallback, errorCallback);
     }
 
     filterOptions = (city) => {
@@ -101,6 +108,8 @@ export class WeatherComponent extends Component {
         let { selectedOptions, city } = this.state;
         let isFinal = (selectedOptions.length === 1) && selectedOptions[0].name === city;
         return (<div className="weather-root">
+
+            <WeatherResult result={this.state.result} city={city}/>
             <form onSubmit={this.onSubmit}>
                 <input type="text" className="weather-input"
                     placeholder="Enter your city"
@@ -120,7 +129,6 @@ export class WeatherComponent extends Component {
                         </li>
                     )) }
                 </ul>
-                <WeatherResult result={this.state.result}/>
             </div>
         </div>)
     }
