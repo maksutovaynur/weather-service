@@ -3,8 +3,8 @@ import '../styles/weather.css';
 import {callById, callByName} from "./weatherApi";
 
 
-function WeatherResult ({result, city}) {
-    if (!result) {
+function WeatherResult ({result, city, ready}) {
+    if (!result || !ready) {
         return (<div className="weather-result"/>)
     }
     let weather = result.weather;
@@ -40,7 +40,8 @@ export class WeatherComponent extends Component {
             selectedOptions: [],
             result: null,
             error: null,
-            inChange: false
+            inChange: false,
+            ready: false
         }
     }
 
@@ -50,9 +51,12 @@ export class WeatherComponent extends Component {
             let result = await x.json();
             const cod = result.cod;
             if (cod && cod >= 400) {
+                this.setState({ready: false});
                 alert("Weather service does not know about your location :( ")
                 return;
             }
+
+            this.setState({ready: true})
             console.log(`Result is ${JSON.stringify(result)}`);
             this.setState({result});
         }
@@ -81,7 +85,7 @@ export class WeatherComponent extends Component {
                 ({name}) => name.toLowerCase().includes(lcity)
             ).slice(0, 10);
 
-            return { city, selectedOptions }
+            return { city, selectedOptions, ready: false }
         });
     }
 
@@ -105,11 +109,11 @@ export class WeatherComponent extends Component {
     }
 
     render(){
-        let { selectedOptions, city } = this.state;
+        let { selectedOptions, city, ready } = this.state;
         let isFinal = (selectedOptions.length === 1) && selectedOptions[0].name === city;
         return (<div className="weather-root">
 
-            <WeatherResult result={this.state.result} city={city}/>
+            <WeatherResult result={this.state.result} city={city} ready={ready}/>
             <form onSubmit={this.onSubmit}>
                 <input type="text" className="weather-input"
                     placeholder="Enter your city"
